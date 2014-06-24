@@ -324,7 +324,7 @@ if(jQuery) (function($) {
 
 		var hue, saturation, brightness, x, y, r, phi,
 
-			hex = input.val(),
+			hex = input.attr('data-hex'),
 			opacity = input.attr('data-opacity'),
 
 			// Helpful references
@@ -428,7 +428,7 @@ if(jQuery) (function($) {
 			}
 
 			// Adjust case
-			input.val( convertCase(hex, settings.letterCase) );
+			//input.val( convertCase(hex, settings.letterCase) );
 
 		}
 
@@ -439,6 +439,7 @@ if(jQuery) (function($) {
 			} else {
 				opacity = 1;
 			}
+			////input
 			if( settings.opacity ) input.attr('data-opacity', opacity);
 		}
 
@@ -448,9 +449,18 @@ if(jQuery) (function($) {
 			opacity: opacity
 		});
 
+		//change input value
+		input.attr('data-hex', hex);
+		if(opacity<1) input.val( rgbString( input, true ) );
+		else input.val(hex);
+
 		// Handle change event
 		doChange(input, hex, opacity);
 
+	}
+
+	function getHex(color){
+		if(/^\#/.test(color)) return color;
 	}
 
 	// Sets the color picker values from the input
@@ -477,14 +487,21 @@ if(jQuery) (function($) {
 			opacityPicker = opacitySlider.find('[class$=-picker]');
 
 		// Determine hex/HSB values
-		hex = convertCase(parseHex(input.val(), true), settings.letterCase);
+		var inputval = input.val();
+		if(/^rgb/.test(inputval)){
+			inputval = inputval.replace(/\s+/g,'').replace(/^rgb(a|)\(/,'').replace(/\)$/,'').split(',');
+			inputval = {r:(val[0]*1),g:(val[0]*1),b:(val[0]*1)};
+			inputval = rgb2hex(inputval);
+			input.data('data-hex',inputval);
+		}
+		hex = convertCase(parseHex(inputval, true), settings.letterCase);
 		if( !hex ){
 			hex = convertCase(parseHex(settings.defaultValue, true), settings.letterCase);
 		}
 		hsb = hex2hsb(hex);
 
 		// Update input value
-		if( !preserveInputValue ) input.val(hex);
+		//if( !preserveInputValue ) input.val(hex);
 
 		// Determine opacity value
 		if( settings.opacity ) {
@@ -622,7 +639,7 @@ if(jQuery) (function($) {
 
 	// Generates an RGB(A) object based on the input's value
 	function rgbObject(input) {
-		var hex = parseHex($(input).val(), true),
+		var hex = parseHex($(input).attr('data-hex'), true),
 			rgb = hex2rgb(hex),
 			opacity = $(input).attr('data-opacity');
 		if( !rgb ) return null;
@@ -632,7 +649,7 @@ if(jQuery) (function($) {
 
 	// Genearates an RGB(A) string based on the input's value
 	function rgbString(input, alpha) {
-		var hex = parseHex($(input).val(), true),
+		var hex = parseHex($(input).attr('data-hex'), true),
 			rgb = hex2rgb(hex),
 			opacity = $(input).attr('data-opacity');
 		if( !rgb ) return null;
@@ -800,13 +817,13 @@ if(jQuery) (function($) {
 			if( !input.data('minicolors-initialized') ) return;
 
 			// Parse Hex
-			input.val(parseHex(input.val(), true));
+			//input.val(parseHex(input.val(), true));
 
 			// Is it blank?
-			if( input.val() === '' ) input.val(parseHex(settings.defaultValue, true));
+			//if( input.val() === '' ) input.val(parseHex(settings.defaultValue, true));
 
 			// Adjust case
-			input.val( convertCase(input.val(), settings.letterCase) );
+			//input.val( convertCase(input.attr('data-hex'), settings.letterCase) );
 
 		})
 		// Handle keypresses
