@@ -487,13 +487,15 @@ if(jQuery) (function($) {
 			opacityPicker = opacitySlider.find('[class$=-picker]');
 
 		// Determine hex/HSB values
+		if(!input.val()) input.val('#ffffff');
 		var inputval = input.val();
 		if(/^rgb/.test(inputval)){
 			inputval = inputval.replace(/\s+/g,'').replace(/^rgb(a|)\(/,'').replace(/\)$/,'').split(',');
 			inputval = {r:(val[0]*1),g:(val[0]*1),b:(val[0]*1)};
 			inputval = rgb2hex(inputval);
-			input.data('data-hex',inputval);
 		}
+		input.data('data-hex',inputval);
+		input.attr('data-hex',inputval);
 		hex = convertCase(parseHex(inputval, true), settings.letterCase);
 		if( !hex ){
 			hex = convertCase(parseHex(settings.defaultValue, true), settings.letterCase);
